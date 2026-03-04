@@ -49,7 +49,7 @@ public final class IDS01J {
      */
     public static void main(String[] args) {
         // \uFE64 and \uFE65 normalize to '<' and '>' under NFKC
-        String attacker = "hello"; 
+        String attacker = "\uFE64" + "script" + "\uFE65";
 
         try {
             System.out.println(normalizeThenValidate(attacker));
