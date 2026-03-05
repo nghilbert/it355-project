@@ -22,7 +22,11 @@ public class FIO02J {
             Files.writeString(file, "Hello Secure Coding\n");
 
             // Delete file (throws exception if it fails)
-            Files.delete(file);
+            boolean deleted = file.toFile().delete();   // returns true/false (can fail silently)
+            if (!deleted) {
+                System.err.println("Delete failed (checked return value).");
+                return;
+            }
 
             System.out.println("File operations succeeded.");
 
