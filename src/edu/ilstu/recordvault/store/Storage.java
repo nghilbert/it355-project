@@ -1,6 +1,5 @@
-package edu.ilstu.recordvault.io;
+package edu.ilstu.recordvault.store;
 
-import store.RecordStore;
 import java.nio.file.Path;
 
 public interface Storage {

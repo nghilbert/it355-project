@@ -1,7 +1,7 @@
 package edu.ilstu.recordvault.store;
 
-import model.Record;
-import util.SafeLogger;
+import edu.ilstu.recordvault.model.Record;
+import edu.ilstu.recordvault.util.SafeLogger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
