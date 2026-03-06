@@ -15,7 +15,11 @@ public class CsvStorage implements Storage {
     private static final int EXPECTED_COLUMNS = 3;
 
     private final SafeLogger logger = SafeLogger.getInstance();
-
+    /**
+ * Creates a CsvStorage instance.
+ *
+ * Constructor performs no risky operations (per OBJ11-J).
+ */
     public CsvStorage() {
     }
 
@@ -23,7 +27,18 @@ public class CsvStorage implements Storage {
     // Missing CSV just means nothing saved yet.
     // ERR01-J (Driss)
     // input output errors are caught and logged safely
-    @Override
+/**
+ * Loads records from a CSV file into the RecordStore.
+ *
+ * Missing files are treated as empty stores (per FIO02-J).
+ * Input/output errors are caught and logged safely (per ERR01-J).
+ * Null parameters are checked before use (per ERR08-J).
+ *
+ * @param store the RecordStore to populate
+ * @param file the CSV file path
+ * @return true if loading succeeds or file does not exist, false if an error occurs
+ */
+   @Override
    public boolean load(RecordStore store, Path file) {
 
     // ERR08-J (Driss)
@@ -108,6 +123,16 @@ public class CsvStorage implements Storage {
     // EXP00-J (Lucas)
     // atomicWrite returns a boolean so we check it.
     // ERR08-J (Driss)
+    /**
+ * Saves records from the RecordStore to a CSV file.
+ *
+ * The return value of atomicWrite() is checked (per EXP00-J).
+ * Null parameters are validated before use (per ERR08-J).
+ *
+ * @param store the RecordStore containing records
+ * @param file the destination CSV file
+ * @return true if the save succeeds, false if the write fails
+ */
     @Override
     public boolean save(RecordStore store, Path file) {
 
@@ -134,6 +159,15 @@ public class CsvStorage implements Storage {
 
     // OBJ05-J (Clayton)
     // getAllRecords returns a copy so callers can't modify the store.\
+    /**
+ * Builds the CSV content for the current records.
+ *
+ * getAllRecords() returns a defensive copy so internal state
+ * cannot be modified externally (per OBJ05-J).
+ *
+ * @param store the RecordStore containing records
+ * @return the CSV formatted string
+ */
     private String buildCsvContent(RecordStore store) {
 
         StringBuilder sb = new StringBuilder();
@@ -155,7 +189,16 @@ public class CsvStorage implements Storage {
     }
 
     // ERR08-J (Driss)
-    // Null fields become empty strings instead of throwing error
+    // Null fields become empty strings instead of throwing an error
+    /**
+ * Escapes a field for safe CSV output.
+ *
+ * Null fields are converted to empty strings to prevent
+ * NullPointerException (per ERR08-J).
+ *
+ * @param field the field value
+ * @return the escaped CSV field
+ */
     private String escapeCsv(String field) {
 
         // ERR08-J (Driss)
