@@ -20,7 +20,6 @@ public class Record implements Serializable {
     private String value;
     private List<String> tags; 
 
-    // OBJ11-J (Clayton): constructor only assigns fields; no IO or risky logic.
     // TSM03-J (Clayton): all fields are set before the object is returned to callers.
     Record(int id, String name, String value, List<String> tags) {
         this.id = id;
