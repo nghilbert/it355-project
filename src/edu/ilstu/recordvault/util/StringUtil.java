@@ -1,4 +1,4 @@
-package util;
+package edu.ilstu.recordvault.util;
 
 public class StringUtil {
 

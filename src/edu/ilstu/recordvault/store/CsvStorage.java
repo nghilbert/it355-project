@@ -1,7 +1,10 @@
 package edu.ilstu.recordvault.store;
 
-import model.Record;
-import store.RecordStore;
+import edu.ilstu.recordvault.model.Record;
+import edu.ilstu.recordvault.store.RecordStore;
+import edu.ilstu.recordvault.util.SafeLogger;
+import edu.ilstu.recordvault.util.StringUtil;
+
 import util.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
