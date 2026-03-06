@@ -2,6 +2,7 @@ package edu.ilstu.recordvault.store;
 
 import edu.ilstu.recordvault.model.Record;
 import edu.ilstu.recordvault.store.RecordStore;
+import edu.ilstu.recordvault.util.FileUtil;
 import edu.ilstu.recordvault.util.SafeLogger;
 import edu.ilstu.recordvault.util.StringUtil;
 

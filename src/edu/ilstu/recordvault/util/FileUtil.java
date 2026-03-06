@@ -1,6 +1,6 @@
 package edu.ilstu.recordvault.util;
 
-import util.SafeLogger;
+import edu.ilstu.recordvault.util.SafeLogger;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
