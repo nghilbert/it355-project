@@ -156,10 +156,13 @@ public class Menu {
 		// record created through factory
 		// TSM03-J (Clayton)
 		// object ready before returning
-		Record record = Record.of(name, value);
-		store.addRecord(record);
-
-		System.out.println("[OK] Created record: " + record.getId());
+		try {
+			Record record = Record.of(name, value);
+			store.addRecord(record);
+			System.out.println("[OK] Created record: " + record.getId());
+		} catch (Exception e) {
+			System.out.println("[ERROR] Failed to create record.");
+		}
 	}
 
 	/**
