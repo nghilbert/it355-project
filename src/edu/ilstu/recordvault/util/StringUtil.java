@@ -1,10 +1,5 @@
 package util;
 
-// RuleMap:
-//   IDS01-J (Driss) — normalize strings: trim whitespace and collapse multiple spaces
-//   ERR08-J (Driss) — null-check every parameter; never catch NullPointerException
-//   EXP01-J (Lucas) — keep string operations simple and readable
-
 public class StringUtil {
 
     private StringUtil() {}
