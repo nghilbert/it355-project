@@ -1,8 +1,7 @@
 package edu.ilstu.recordvault.util;
 
-import io.CsvStorage;
-import store.RecordStore;
-import util.SafeLogger;
+import edu.ilstu.recordvault.store.CsvStorage;
+import edu.ilstu.recordvault.store.RecordStore;
 
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
