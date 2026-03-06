@@ -4,17 +4,36 @@ import edu.ilstu.recordvault.util.SafeLogger;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-
+/**
+ * Utility methods for safe file operations.
+ *
+ * Provides helper functions that prevent partial file writes
+ * and handle file errors safely.
+ */
 public class FileUtil {
 
     private static final SafeLogger logger = SafeLogger.getInstance();
-
+    /**
+ * Prevents instantiation of the utility class.
+ */
     private FileUtil() {}
 
     // FIO02-J (Lucas)
     // Write to a temp file first so the real file does not get half-written.
     // FIO14-J (Lucas)
     // If something fails the temp file gets cleaned up.
+    /**
+ * Writes content to a file using an atomic write strategy.
+ *
+ * The file is first written to a temporary file and then moved
+ * to the destination to avoid partially written files (per FIO02-J).
+ * Temporary files are cleaned up if an error occurs (per FIO14-J).
+ * Null parameters are checked before use (per ERR08-J).
+ *
+ * @param destination the destination file path
+ * @param content the content to write
+ * @return true if the write operation succeeds, false if an error occurs
+ */
     public static boolean atomicWrite(Path destination, String content) {
 
         // ERR08-J (Driss)
