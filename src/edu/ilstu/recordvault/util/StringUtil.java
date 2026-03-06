@@ -43,23 +43,20 @@ public class StringUtil {
     // ERR08-J (Driss)
     // Null input handled explicitly.
     public static String truncate(String input, int maxLength) {
-
-        // ERR08-J (Driss)
-        if (input == null) {
-            return "";
-        }
-
-        if (maxLength < 4) {
-            maxLength = 4;
-        }
-
-        // EXP01-J (Lucas)
-        if (input.length() <= maxLength) {
-            return input;
-        }
-
-        return input.substring(0, maxLength - 3) + "...";
+    // RULE: ERR08-J (Driss)
+    if (input == null) {
+        return "";
     }
+
+    // RULE: EXP01-J (Lucas)
+    int safeLength = Math.max(maxLength, 4);
+
+    if (input.length() <= safeLength) {
+        return input;
+    }
+
+    return input.substring(0, safeLength - 3) + "...";
+}
 
     // ERR08-J (Driss)
     // Explicit null check avoids relying on exceptions.
