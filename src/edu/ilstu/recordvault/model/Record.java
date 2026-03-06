@@ -1,4 +1,4 @@
-
+package edu.ilstu.recordvault.model;
 
 import java.util.ArrayList;
 import java.util.List;
