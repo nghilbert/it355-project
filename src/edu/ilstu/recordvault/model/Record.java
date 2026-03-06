@@ -85,13 +85,13 @@ public class Record implements Serializable {
      * @throws InvalidObjectException if any of the object's fields are invalid.
      */
     private void validate(int id, String name, String value) throws InvalidObjectException {
-        if (this.name == null || this.name.isEmpty()) {
+        if (name == null || name.isEmpty()) {
             throw new InvalidObjectException("Record name is missing or empty");
         }
-        if (this.value == null) {
+        if (value == null) {
             throw new InvalidObjectException("Record value is null");
         }
-        if (this.id <= 0) {
+        if (id <= 0) {
             throw new InvalidObjectException("Record has invalid id: " + this.id);
         }
     }
