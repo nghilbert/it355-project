@@ -6,7 +6,12 @@ import util.SafeLogger;
 
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+/**
+ * Background service that periodically saves records to disk.
+ *
+ * Uses a background thread to perform autosave operations
+ * at a fixed interval.
+ */
 public class AutosaveService {
 
     private static final long INTERVAL_MS = 30_000L;
@@ -27,6 +32,17 @@ public class AutosaveService {
     // Constructor just assigns the fields. The background thread is started later
     // TSM03-J (Clayton)
     // Everything needed by this class is initialized before the object is used
+    /**
+ * Creates the AutosaveService.
+ *
+ * The constructor only initializes fields and does not start
+ * any threads (per TSM01-J). All required dependencies are
+ * initialized before the object is used (per TSM03-J).
+ *
+ * @param store the RecordStore containing records
+ * @param csvStorage the CSV storage handler
+ * @param csvFile the file where records will be saved
+ */
     public AutosaveService(RecordStore store, CsvStorage csvStorage, Path csvFile) {
         this.store = store;
         this.csvStorage = csvStorage;
@@ -34,11 +50,16 @@ public class AutosaveService {
         this.logger = SafeLogger.getInstance();
     }
 
+    //TSM01-J (Clayton)
+     // start() runs after the object is fully constructed, not inside the constructor.
+     //VNA00-J
     /**
-     * TSM01-J (Clayton)
-     * start() runs after the object is fully constructed, not inside the constructor.
-     * VNA00-J
-     */
+ * Starts the autosave background thread.
+ *
+ * The thread is started after the object is fully constructed
+ * (per TSM01-J). An AtomicBoolean is used so both threads
+ * always see the latest running state (per VNA00-J).
+ */
     public void start() {
         // VNA00-J 
         running.set(true);
@@ -51,11 +72,16 @@ public class AutosaveService {
         logger.log("AutosaveService started (every " + INTERVAL_MS + "ms).");
     }
 
-    /**
-     * FIO14-J (Lucas)
-     * stop() interrupts the thread and waits for it to finish.
-     * VNA00-J Caleb
-     */
+    
+     //FIO14-J (Lucas)
+     //stop() interrupts the thread and waits for it to finish.
+     //VNA00-J Caleb
+     /**
+ * Stops the autosave background thread.
+ *
+ * The thread is interrupted and joined to ensure proper
+ * shutdown behavior (per FIO14-J).
+ */
     public void stop() {
         // VNA00-J 
         running.set(false);
@@ -79,12 +105,19 @@ public class AutosaveService {
         logger.log("AutosaveService stopped.");
     }
 
-    /**
-     * VNA00-J (Caleb/Lucas)
-     * The loop checks the running flag each cycle so the thread sees updates right away.
-     * ERR01-J (Driss)
-     * Any error during autosave should be handled so the thread doesn't silently die.
-     */
+    
+     //VNA00-J (Caleb/Lucas)
+     //The loop checks the running flag each cycle so the thread sees updates right away.
+     //ERR01-J (Driss)
+     // Any error during autosave should be handled so the thread doesn't silently die.
+     /**
+ * Main autosave loop executed by the background thread.
+ *
+ * The running flag is checked each cycle so updates are
+ * visible across threads (per VNA00-J). Errors are caught
+ * so the autosave thread does not terminate unexpectedly
+ * (per ERR01-J).
+ */
     private void run() {
         // VNA00-J 
         while (running.get()) {
@@ -106,11 +139,17 @@ public class AutosaveService {
         logger.log("Autosave thread exiting.");
     }
 
+     //EXP00-J (Lucas)
+     //save() returns a boolean so we check the result.
+     //ERR01-J (Driss)
+     //
     /**
-     * EXP00-J (Lucas)
-     * save() returns a boolean so we check the result.
-     * ERR01-J (Driss)
-     */
+ * Performs a single autosave operation.
+ *
+ * The return value of save() is checked to confirm the
+ * write succeeded (per EXP00-J). Errors are handled safely
+ * and logged without crashing the thread (per ERR01-J).
+ */
     private void performSave() {
         try {
             // EXP00-J (Lucas)
@@ -130,6 +169,11 @@ public class AutosaveService {
     }
 
     // VNA00-J (Caleb/Lucas)
+    /**
+ * Returns whether the autosave service is currently running.
+ *
+ * @return true if the autosave thread is active
+ */
     public boolean isRunning() {
         return running.get();
     }
