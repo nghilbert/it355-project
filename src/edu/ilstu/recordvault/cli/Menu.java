@@ -7,13 +7,27 @@ import edu.ilstu.recordvault.store.RecordStore;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ * Provides a command-line interface for interacting with RecordVault.
+ * 
+ * Handles user input, displays menu options, and performs actions
+ * such as creating, listing, and saving records.
+ */
 public class Menu {
 	private final RecordStore store;
 	private final CsvStorage csvStorage;
 	private final Path csvFilepath;
 	private final Scanner scanner;
-
+	/**
+ * Creates the Menu interface.
+ *
+ * Constructor only assigns fields and performs no risky work
+ * (per OBJ11-J).
+ *
+ * @param store the RecordStore used to manage records
+ * @param csvStorage the CSV storage handler for saving records
+ * @param csvFilepath the path to the CSV file
+ */
 	public Menu(RecordStore store, CsvStorage csvStorage, Path csvFilepath) {
 		this.store = store;
 		this.csvStorage = csvStorage;
@@ -34,13 +48,22 @@ public class Menu {
 			this.option_id = option_id;
 			this.label = label;
 		}
-
+		/**
+ * Returns a formatted string representation of the menu option.
+ *
+ * @return the formatted option label displayed in the menu
+ */
 		@Override
 		public String toString() {
 			return "[" + option_id + "]: " + label;
 		}
 	}
-
+	/**
+ * Starts the command-line menu loop.
+ *
+ * User input is validated before use to prevent runtime errors
+ * such as NumberFormatException (per ERR08-J).
+ */
 	public void start() {
 		System.out.println("===== RecordVault =====");
 
@@ -84,7 +107,12 @@ public class Menu {
 	private void doCreate() {
 
 	}
-
+	/**
+ * Lists all records currently stored in the RecordStore.
+ *
+ * getAllRecords() returns a defensive copy so internal
+ * store data cannot be modified externally (per OBJ05-J).
+ */
 	private void doList() {
 		List<Record> records = store.getAllRecords();
 		if (records.isEmpty()) {
@@ -97,7 +125,9 @@ public class Menu {
 		}
 		System.out.println("--- End ---");
 	}
-
+	/**
+ * Prints the available menu options to the console.
+ */
 	private void printMenu() {
 		System.out.println();
 		for (Option option : Option.values()) {
