@@ -11,7 +11,13 @@ import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+/**
+ * Thread-safe logger used by RecordVault.
+ *
+ * Writes log entries to a file and falls back to stderr if
+ * logging to file is unavailable. Logging failures must not
+ * interfere with the program (per ERR02-J).
+ */
 public class SafeLogger {
 
     private static final Path LOG_FILE = Paths.get("data", "recordvault.log");
@@ -20,11 +26,21 @@ public class SafeLogger {
     private static final SafeLogger INSTANCE = new SafeLogger();
 
     private BufferedWriter writer;
-
+    /**
+ * Returns the singleton SafeLogger instance.
+ *
+ * @return the shared SafeLogger instance
+ */
     public static SafeLogger getInstance() {
         return INSTANCE;
     }
-
+    /**
+ * Initializes the SafeLogger and prepares the log file.
+ *
+ * File-related errors are detected and handled safely
+ * (per FIO02-J). Logging initialization failures must not
+ * crash the program (per ERR02-J).
+ */
     private SafeLogger() {
         try {
             // FIO02-J (Driss): detect and handle file-related errors safely
@@ -47,7 +63,17 @@ public class SafeLogger {
             System.err.println("[SafeLogger] Logging to file is unavailable. Using stderr.");
         }
     }
-
+    /**
+ * Writes a message to the log.
+ *
+ * Input messages are normalized and sanitized to prevent
+ * injection or formatting issues (per IDS01-J). Null values
+ * are handled safely (per ERR08-J). Logging failures are
+ * caught so they do not interrupt program execution
+ * (per ERR02-J).
+ *
+ * @param message the message to log
+ */
     public void log(String message) {
         // ERR08-J (Driss): check for null explicitly before use
         if (message == null) {
@@ -80,7 +106,12 @@ public class SafeLogger {
             System.err.println(entry);
         }
     }
-
+    /**
+ * Closes the logger and releases the file resource.
+ *
+ * Exceptions during cleanup are caught so logging shutdown
+ * cannot break the program (per ERR02-J).
+ */
     public void close() {
         if (writer != null) {
             try {
