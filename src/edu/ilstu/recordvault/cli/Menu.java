@@ -7,27 +7,24 @@ import edu.ilstu.recordvault.store.RecordStore;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
+
 /**
- * Provides a command-line interface for interacting with RecordVault.
- * 
- * Handles user input, displays menu options, and performs actions
- * such as creating, listing, and saving records.
+ * Provides a command line menu for RecordVault.
+ *
+ * Lets the user create records list records save records
+ * and exit the program
  */
 public class Menu {
+
 	private final RecordStore store;
 	private final CsvStorage csvStorage;
 	private final Path csvFilepath;
 	private final Scanner scanner;
-	/**
- * Creates the Menu interface.
- *
- * Constructor only assigns fields and performs no risky work
- * (per OBJ11-J).
- *
- * @param store the RecordStore used to manage records
- * @param csvStorage the CSV storage handler for saving records
- * @param csvFilepath the path to the CSV file
- */
+
+	// OBJ11-J (Clayton)
+	// constructor does not do any risky work
+	// TSM01-J (Clayton)
+	// object built first then used later
 	public Menu(RecordStore store, CsvStorage csvStorage, Path csvFilepath) {
 		this.store = store;
 		this.csvStorage = csvStorage;
@@ -48,39 +45,47 @@ public class Menu {
 			this.option_id = option_id;
 			this.label = label;
 		}
+
 		/**
- * Returns a formatted string representation of the menu option.
- *
- * @return the formatted option label displayed in the menu
- */
+		 * Returns the menu option in the format shown to the user.
+		 *
+		 * @return formatted menu option text
+		 */
 		@Override
 		public String toString() {
 			return "[" + option_id + "]: " + label;
 		}
 	}
+
 	/**
- * Starts the command-line menu loop.
- *
- * User input is validated before use to prevent runtime errors
- * such as NumberFormatException (per ERR08-J).
- */
+	 * IDS00-J (Nate)
+	 * Menu input is checked before it is used.
+	 *
+	 * FIO14-J (Lucas)
+	 * When the loop ends shutdown can continue cleanly.
+	 */
 	public void start() {
 		System.out.println("===== RecordVault =====");
 
 		boolean isRunning = true;
+
 		while (isRunning) {
 			printMenu();
+			String rawInput = scanner.nextLine().trim();
+
 			int choice;
 			try {
-				choice = Integer.parseInt(scanner.nextLine().trim());
+				choice = Integer.parseInt(rawInput);
 			} catch (NumberFormatException e) {
-				System.out.println("[ERROR] Invalid choice.");
+				System.out.println("Error: Invalid choice.");
 				continue;
 			}
+
 			if (choice < 1 || choice > Option.values().length) {
 				System.out.println("[ERROR] Invalid choice.");
 				continue;
 			}
+
 			switch (choice) {
 				case 1:
 					doCreate();
@@ -94,40 +99,94 @@ public class Menu {
 				case 4:
 					isRunning = false;
 					break;
+				default:
+					System.out.println("[ERROR] Invalid choice.");
 			}
 		}
 
 		System.out.println("Exiting Record Vault...");
 	}
 
-	private void doSave() {
-
-	}
-
-	private void doCreate() {
-
-	}
 	/**
- * Lists all records currently stored in the RecordStore.
- *
- * getAllRecords() returns a defensive copy so internal
- * store data cannot be modified externally (per OBJ05-J).
- */
+	 * EXP00-J (Lucas)
+	 * save returns boolean so check it.
+	 *
+	 * ERR01-J (Driss)
+	 * Only a safe error message shown.
+	 */
+	private void doSave() {
+		boolean ok = csvStorage.save(store, csvFilepath);
+
+		if (ok) {
+			System.out.println("[OK] Saved to " + csvFilepath);
+		} else {
+			System.out.println("[ERROR] Save failed. Check the log.");
+		}
+	}
+
+	/**
+	 * IDS00-J (Nate)
+	 * Name and value input must pass validation.
+	 *
+	 * IDS01-J (Driss)
+	 * Normalize text first before checking it.
+	 */
+	private void doCreate() {
+		System.out.print("Enter record name: ");
+		String rawName = scanner.nextLine();
+
+		String name = rawName.trim();
+
+		if (name.isEmpty()) {
+			System.out.println("[ERROR] Invalid name.");
+			return;
+		}
+
+		System.out.print("Enter record value: ");
+		String rawValue = scanner.nextLine();
+
+		String value = rawValue.trim();
+
+		if (value.isEmpty()) {
+			System.out.println("[ERROR] Invalid value.");
+			return;
+		}
+
+		// OBJ11-J (Clayton)
+		// record created through factory
+		// TSM03-J (Clayton)
+		// object ready before returning
+		Record record = Record.of(name, value);
+		store.addRecord(record);
+
+		System.out.println("[OK] Created record: " + record.getId());
+	}
+
+	/**
+	 * OBJ05-J (Clayton)
+	 * getAllRecords returns copy not internal list
+	 *
+	 * EXP01-J (Lucas)
+	 * Simple loop used here
+	 */
 	private void doList() {
 		List<Record> records = store.getAllRecords();
+
 		if (records.isEmpty()) {
 			System.out.println("(no records)");
 			return;
 		}
+
 		System.out.println("--- Records ---");
 		for (Record record : records) {
 			System.out.println(record);
 		}
 		System.out.println("--- End ---");
 	}
+
 	/**
- * Prints the available menu options to the console.
- */
+	 * Prints the menu options for the user.
+	 */
 	private void printMenu() {
 		System.out.println();
 		for (Option option : Option.values()) {
